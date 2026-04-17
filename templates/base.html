@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</html>
+<body class=" bg-secondary">
+
+{% if session.get('logueado') %}
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">Gestor</a>
+            <div class="container">
+                {% if "usuario_id" in session%}
+                    <span class="navbar-text text-whi me-3">
+                        Hola, <strong>{{ session["nombre"] }}</strong>
+                    </span>
+                    <a href="{{url_for('logout')}}" class="btn btn-outline-danger btn-sm">Cerrar sesion</a>
+                {% else %}
+                    <a href="{{url_for('login')}}" class="btn btn-outline-light btn-sm">Iniciar sesion</a>
+                    <a href="{{url_for('registro')}}" class="btn btn-outline-light btn-sm ms-2">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+{% endif %}
+    <div class="container">
+        {% with messages = get_flashed_messages()%}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+</body>
+</html>
