@@ -9,3 +9,14 @@
 **Correo:** 24308060610040@cetis61.edu.mx
 
 ![Oaxaca Orona David Adrian foto](https://github.com/Davidoaxacacetis/html/blob/main/f11.jpg)
+
+[project]
+name = "gestor"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.3",
+    "pymongo>=4.16.0",
+]
