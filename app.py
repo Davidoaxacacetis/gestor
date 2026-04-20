@@ -39,11 +39,16 @@ def login():
             session['usuario_id'] = str(usuario['_id'])
             session['nombre'] = usuario['nombre']
             session["logueado"] = True 
+            flash('Inicio de sesión exitoso.', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Credenciales incorrectas. Intenta nuevamente.', 'danger')
 
     return render_template('login.html')
+
+@app.route('/recuperar_password', methods=['GET', 'POST'])
+def recuperar_password():
+    return render_template('recuperar.html')
 
 @app.route('/')
 def dashboard():
