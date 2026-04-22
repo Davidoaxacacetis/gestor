@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 p-5 mb-4">
         <div class="card shadow-sm mb-4 border-0 bg-white">
             <div class="card-body">
                 <h5 class="card-title text-primary">Nueva Tarea</h5>
@@ -36,8 +36,8 @@
         </div>
     </div>
 
-    <div class="col-md-6 mb-4">
-        <h4 class="text-success mb-3">Completadas</h4>
+    <div class="col-md-6 p-5 mb-4">
+        <h4 class="text-light mb-3">Completadas</h4>
         <div class="list-group shadow-sm opacity-75">
             {% for tarea in completadas %}
                 <div class="list-group-item list-group-item-action bg-light">

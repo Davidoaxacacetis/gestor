@@ -28,19 +28,6 @@ class GestorTareas:
         self.tareas.create_index([("usuario_id", 1), ("fecha_creacion", -1)])
         self.tareas.create_index("estado")
     
-    def crear_usuario(self, nombre: str, email: str) -> Optional[str]:
-        """Crear un nuevo usuario"""
-        try:
-            resultado = self.usuarios.insert_one({
-                "nombre": nombre,
-                "email": email,
-                "fecha_registro": datetime.now(),
-                "activo": True
-            })
-            return str(resultado.inserted_id)
-        except DuplicateKeyError:
-            print(f"❌ Error: El email {email} ya está registrado")
-            return None
     
     def obtener_usuario(self, usuario_id: str) -> Optional[Dict]:
         """Obtener usuario por ID"""
@@ -53,24 +40,36 @@ class GestorTareas:
             print(f"Error al obtener usuario: {e}")
             return None
     
-    def obtener_usuario2(self, email: str, contraseña: str) -> Optional[Dict]:
-        """Obtener usuario por email y contraseña"""
+    def crear_usuario(self, nombre: str, email: str, contraseña: str) -> Optional[str]:
+        """Crear un nuevo usuario con contraseña"""
         try:
-            correo = self.usuarios.find_one({"email": ObjectId(email)})
-            if correo:
-                #Verificar el password tecleado por el usuario con la base de datos
-                #Regresar los datos del usuario
+            resultado = self.usuarios.insert_one({
+                "nombre": nombre,
+                "email": email,
+                "password": contraseña, # Guardamos la contraseña
+                "fecha_registro": datetime.now(),
+                "activo": True
+            })
+            return str(resultado.inserted_id)
+        except DuplicateKeyError:
+            print(f"❌ Error: El email {email} ya está registrado")
+            return None
+
+    def validar_credenciales(self, email: str, contraseña: str) -> Optional[Dict]:
+        """Validar credenciales para el Login"""
+        try:
+            usuario = self.usuarios.find_one({"email": email, "password": contraseña})
+            if usuario:
                 usuario['_id'] = str(usuario['_id'])
             return usuario
         except Exception as e:
-            print(f"Error al obtener usuario: {e}")
+            print(f"Error al validar credenciales: {e}")
             return None
     
     
     def crear_tarea(self, usuario_id: str, titulo: str, descripcion: str = "", 
         fecha_limite: Optional[datetime] = None) -> Optional[str]:
         """Crear una nueva tarea para un usuario"""
-        # Verificar que el usuario existe
         if not self.obtener_usuario(usuario_id):
             print(f"❌ Error: Usuario {usuario_id} no existe")
             return None

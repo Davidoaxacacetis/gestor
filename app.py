@@ -8,43 +8,49 @@ gestor = GestorTareas()
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
-        nombre = request.form['nombre']
-        email = request.form['email']
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
         contraseña = request.form.get("contraseña")
         confirmarcontra = request.form.get("confirmarcontra")
 
         if contraseña != confirmarcontra:
             flash("Las contraseñas no coinciden", "error")
-            return render_template("registro.html", **request.form)
-        else:
-            usuario_id = gestor.crear_usuario(contraseña, email)
+            return render_template("registro.html")
+
+        usuario_id = gestor.crear_usuario(nombre, email, contraseña)
 
         if usuario_id:
             flash('Registro exitoso. Por favor, inicia sesión.', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Error al registrar. Intenta nuevamente.', 'danger')
+            flash('El correo ya está registrado o hubo un error.', 'danger')
             
     return render_template('registro.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email')
+        contraseña = request.form.get('contraseña')
 
-        usuario = gestor.obtener_usuario(password, email)
+        usuario = gestor.validar_credenciales(email, contraseña)
 
         if usuario:
-            session['usuario_id'] = str(usuario['_id'])
+            session['logueado'] = True
+            session['usuario_id'] = usuario['_id']
             session['nombre'] = usuario['nombre']
-            session["logueado"] = True 
-            flash('Inicio de sesión exitoso.', 'success')
+            flash(f"¡Bienvenido de nuevo, {usuario['nombre']}!", "success")
             return redirect(url_for('dashboard'))
         else:
-            flash('Credenciales incorrectas. Intenta nuevamente.', 'danger')
-
+            flash("Correo o contraseña incorrectos", "danger")
+            
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear() 
+    flash("Has cerrado sesión correctamente", "info")
+    return redirect(url_for('login'))
 
 @app.route('/recuperar_password', methods=['GET', 'POST'])
 def recuperar_password():
@@ -76,13 +82,8 @@ def crear_tarea():
 @app.route('/completar_tarea/<tarea_id>')
 def completar_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.completar_tarea(tarea_id,"completada")
+        gestor.actualizar_estado_tarea(tarea_id, "completada")
     return redirect(url_for('dashboard'))
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
