@@ -46,7 +46,7 @@ class GestorTareas:
             resultado = self.usuarios.insert_one({
                 "nombre": nombre,
                 "email": email,
-                "password": contraseña, # Guardamos la contraseña
+                "password": contraseña,
                 "fecha_registro": datetime.now(),
                 "activo": True
             })

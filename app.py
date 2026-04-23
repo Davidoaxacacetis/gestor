@@ -5,6 +5,8 @@ app = Flask(__name__)
 app.secret_key = 'OODA'
 gestor = GestorTareas()
 
+gestor.crear_usuario("David","davidelguapo123@gmail.com","password123")
+
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
