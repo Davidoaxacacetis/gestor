@@ -8,7 +8,6 @@
                 <h3 class="card-title text-center mb-4">Perfil del Usuario</h3>
                 <p><strong>Nombre:</strong> {{usuario.nombre}}</p>
                 <p><strong>Correo electrónico:</strong> {{usuario.email}}</p>
-                <p><strong>Contraseña:</strong> {{usuario.contraseña}}</p>
                 <p><strong>Fecha de registro:</strong> {{usuario.fecha_registro.strftime('%Y-%m-%d')}}</p>
                 <a href="{{url_for('dashboard')}}" class="btn btn-primary">Volver al Dashboard</a>
             </div>
