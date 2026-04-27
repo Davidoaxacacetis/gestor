@@ -54,6 +54,26 @@ def logout():
     flash("Has cerrado sesión correctamente", "info")
     return redirect(url_for('login'))
 
+@app.route('/editar_usuario', methods=['GET', 'POST'])
+def editar_usuario():
+    usuario= gestor.obtener_usuario(session['usuario_id'])
+    if request.method == 'POST':
+        nuevo_nombre = request.form.get('nombre')
+        nueva_email = request.form.get('email')
+        
+        if nuevo_nombre:
+            usuario['nombre'] = nuevo_nombre
+        if nueva_email:
+            usuario['email'] = nueva_email
+        
+        gestor.actualizar_usuario(session['usuario_id'], usuario)
+        session['nombre'] = usuario['nombre']
+        session['email'] = usuario['email']
+        flash('Perfil actualizado correctamente', 'success')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('editar.html', usuario=usuario)
+
 @app.route('/recuperar_password', methods=['GET', 'POST'])
 def recuperar_password():
     return render_template('recuperar.html')
