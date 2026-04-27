@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for,session,fla
 from tareas import GestorTareas
 
 app = Flask(__name__)
-app.secret_key = 'OODA'
+app.secret_key = 'Ruby'
 gestor = GestorTareas()
 
 gestor.crear_usuario("David","davidelguapo123@gmail.com","password123")
