@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-3 mt-5">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Perfil del Usuario</h3>
+                <p><strong>Nombre:</strong> {{usuario.nombre}}</p>
+                <p><strong>Correo electrónico:</strong> {{usuario.email}}</p>
+                <p><strong>Contraseña:</strong> {{usuario.contraseña}}</p>
+                <p><strong>Último inicio de sesión:</strong> {{usuario.ultimo_inicio.strftime('%Y-%m-%d %H:%M:%S')}}</p>
+                <p><strong>Fecha de registro:</strong> {{usuario.fecha_registro.strftime('%Y-%m-%d')}}</p>
