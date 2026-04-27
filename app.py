@@ -54,6 +54,10 @@ def logout():
     flash("Has cerrado sesión correctamente", "info")
     return redirect(url_for('login'))
 
+@app.route('/perfil')
+def perfil():
+    return render_template('perfil.html')
+
 @app.route('/editar_usuario', methods=['GET', 'POST'])
 def editar_usuario():
     if 'usuario_id' not in session:
