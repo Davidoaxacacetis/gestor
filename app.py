@@ -56,7 +56,8 @@ def logout():
 
 @app.route('/perfil')
 def perfil():
-    return render_template('perfil.html')
+    usuario = gestor.obtener_usuario(session['usuario_id'])
+    return render_template('perfil.html', usuario=usuario)
 
 @app.route('/editar_usuario', methods=['GET', 'POST'])
 def editar_usuario():
