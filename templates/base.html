@@ -19,8 +19,8 @@
                     <span class="navbar-text text-white me-3">
                         Hola, <strong>{{ session["nombre"] }}</strong>
                     </span>
-                    <a href="{{url_for('editar_usuario')}}" class="btn btn-outline-light btn-sm me-2">Editar perfil</a>
                     <a href="{{url_for('perfil')}}" class="btn btn-outline-light btn-sm me-2">Perfil</a>
+                    <a href="{{url_for('editar_usuario')}}" class="btn btn-outline-light btn-sm me-2">Editar perfil</a>
                     <a href="{{url_for('logout')}}" class="btn btn-outline-danger btn-sm me-2">Cerrar sesion</a>
                 {% endif %}
             </div>
