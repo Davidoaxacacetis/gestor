@@ -55,6 +55,31 @@ class GestorTareas:
             print(f"❌ Error: El email {email} ya está registrado")
             return None
 
+    def actualizar_usuario(self, usuario_id: str, datos_actualizados: Dict) -> bool:
+        """
+        Actualiza los datos de un usuario existente.
+        Permite actualizar nombre, email, password, etc.
+        """
+        try:
+            campos_permitidos = ["nombre", "email", "password", "activo"]
+            update_data = {k: v for k, v in datos_actualizados.items() if k in campos_permitidos}
+            
+            if not update_data:
+                return False
+
+            resultado = self.usuarios.update_one(
+                {"_id": ObjectId(usuario_id)},
+                {"$set": update_data}
+            )
+            
+            return resultado.modified_count > 0
+        except DuplicateKeyError:
+            print(f"❌ Error: El email ya está registrado por otro usuario")
+            return False
+        except Exception as e:
+            print(f"❌ Error al actualizar usuario: {e}")
+            return False
+
     def validar_credenciales(self, email: str, contraseña: str) -> Optional[Dict]:
         """Validar credenciales para el Login"""
         try:
