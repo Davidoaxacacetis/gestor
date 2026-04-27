@@ -13,7 +13,7 @@
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container">
-            <a class="navbar-brand" >📝 Gestor</a>
+            <a class="navbar-brand" href="{{url_for('dashboard')}}">📝 Gestor</a>
             <div class="container">
                 {% if "usuario_id" in session%}
                     <span class="navbar-text text-white me-3">
