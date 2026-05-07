@@ -126,12 +126,18 @@ class GestorTareas:
             t['usuario_id'] = str(t['usuario_id'])
             resultado.append(t)
         return resultado
-    
-    def actualizar_estado_tarea(self, tarea_id: str, nuevo_estado: str) -> bool:
-        """Actualizar el estado de una tarea"""
-        estados_validos = ["pendiente", "en_progreso", "completada", "cancelada"]
-        if nuevo_estado not in estados_validos:
-            print(f"❌ Error: Estado '{nuevo_estado}' no válido")
+
+    def actualizar_tarea(self, tarea_id: str, datos: Dict) -> bool:
+        """Actualiza cualquier campo de una tarea y añade fecha de modificación"""
+        try:
+            datos['fecha_modificacion'] = datetime.now()
+            resultado = self.tareas.update_one(
+                {"_id": ObjectId(tarea_id)},
+                {"$set": datos}
+            )
+            return resultado.modified_count > 0
+        except Exception as e:
+            print(f"Error al actualizar tarea: {e}")
             return False
         
         resultado = self.tareas.update_one(
