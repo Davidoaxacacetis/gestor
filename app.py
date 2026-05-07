@@ -46,6 +46,38 @@ def login():
             
     return render_template('login.html')
 
+@app.route('/recuperar_password', methods=['GET', 'POST'])
+def recuperar_password():
+    return render_template('recuperar.html')
+
+
+@app.route('/editar_usuario', methods=['GET', 'POST'])
+def editar_usuario():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+    
+    if request.method == 'POST':
+        datos_nuevos = {
+            'nombre': request.form.get('nombre'),
+            'email': request.form.get('email')
+        }
+        
+        datos_nuevos = {k: v for k, v in datos_nuevos.items() if v}
+
+        if gestor.actualizar_usuario(usuario_id, datos_nuevos):
+            if 'nombre' in datos_nuevos: session['nombre'] = datos_nuevos['nombre']
+            if 'email' in datos_nuevos: session['email'] = datos_nuevos['email']
+            
+            flash('Perfil actualizado correctamente', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('No se realizaron cambios o el email ya existe', 'warning')
+
+    usuario = gestor.obtener_usuario(usuario_id)
+    return render_template('editar.html', usuario=usuario)
+
 @app.route('/logout')
 def logout():
     session.clear() 
