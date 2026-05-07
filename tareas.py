@@ -128,16 +128,35 @@ class GestorTareas:
         return resultado
 
     def actualizar_tarea(self, tarea_id: str, datos: Dict) -> bool:
-        """Actualiza cualquier campo de una tarea y añade fecha de modificación"""
+        """
+        Actualiza campos de una tarea. 
+        Si el estado cambia a 'pendiente', limpia motivos de cancelación.
+        Si cambia a 'completada', marca el booleano completada como True.
+        """
         try:
+            if 'estado' in datos:
+                nuevo_estado = datos['estado']
+                
+                if nuevo_estado == "pendiente":
+                    datos['completada'] = False
+                    self.tareas.update_one(
+                        {"_id": ObjectId(tarea_id)},
+                        {"$unset": {"motivo_cancelacion": ""}}
+                    )
+                
+                elif nuevo_estado == "completada":
+                    datos['completada'] = True
+
             datos['fecha_modificacion'] = datetime.now()
+
             resultado = self.tareas.update_one(
                 {"_id": ObjectId(tarea_id)},
                 {"$set": datos}
             )
+            
             return resultado.modified_count > 0
         except Exception as e:
-            print(f"Error al actualizar tarea: {e}")
+            print(f"❌ Error al actualizar tarea: {e}")
             return False
         
         resultado = self.tareas.update_one(

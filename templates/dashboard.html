@@ -1,54 +1,98 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 p-5 mb-4">
-        <div class="card shadow-sm mb-4 border-0 bg-white">
-            <div class="card-body">
-                <h5 class="card-title text-primary">Nueva Tarea</h5>
-            <form method="POST" action="{{url_for('crear_tarea')}}">
-                <div class="mb-2">
-                    <input type="text" name="titulo" class="form-control" placeholder="Titulo de la tarea" required>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-primary"><i class="bi bi-plus-circle me-2"></i>Nueva Tarea</h5>
+                    <form method="POST" action="{{ url_for('crear_tarea') }}">
+                        <div class="mb-2">
+                            <input type="text" name="titulo" class="form-control" placeholder="¿Qué hay que hacer?" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="descripcion" class="form-control" placeholder="Añade una descripción (opcional)" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm">Crear Tarea</button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <textarea name="descripcion" class="form-control" placeholder="Descripcion de la tarea" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm px-4">Crear Tarea</button>
-            </form>
+            </div>
+
+            <h4 class="text-warning mb-3">Tareas en curso</h4>
+            <div class="list-group shadow-sm">
+                {% for tarea in pendientes %}
+                    <div class="list-group-item list-group-item-action p-3">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1 fw-bold">
+                                    {% if tarea.estado == 'en_progreso' %}
+                                        <span class="badge bg-info text-dark me-2">En progreso</span>
+                                    {% endif %}
+                                    {{ tarea.titulo }}
+                                </h6>
+                                <p class="mb-2 text-muted small">{{ tarea.descripcion or 'Sin descripción' }}</p>
+                            </div>
+                            <div class="btn-group">
+                                <a href="{{ url_for('completar_tarea', tarea_id=tarea._id) }}" class="btn btn-sm btn-success" title="Completar">
+                                    <i class="bi bi-check-lg"></i>
+                                </a>
+                                
+                                {% if tarea.estado == 'pendiente' %}
+                                <a href="{{ url_for('empezar_tarea', tarea_id=tarea._id) }}" class="btn btn-sm btn-outline-info" title="Empezar">
+                                    <i class="bi bi-play-fill"></i>
+                                </a>
+                                {% endif %}
+
+                                <a href="{{ url_for('eliminar_tarea', tarea_id=tarea._id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar permanentemente?')" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <form action="{{ url_for('cancelar_tarea', tarea_id=tarea._id) }}" method="POST" class="mt-2 d-flex">
+                            <input type="text" name="motivo" class="form-control form-control-sm me-1" placeholder="Motivo de cancelación" required style="font-size: 0.75rem;">
+                            <button type="submit" class="btn btn-sm btn-link text-danger p-0">Cancelar</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="list-group-item text-center text-muted py-4">No tienes tareas pendientes. ¡Buen trabajo!</div>
+                {% endfor %}
             </div>
         </div>
 
-        <h4 class="text-warning mb-3">Pendientes</h4>
-        <div class="list-group shadow-sm">
-            {% for tarea in pendientes %}
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-item-center">
-                    <div>
-                        <h6 class="mb-1">{{ tarea.titulo }}</h6>
-                        {% if tarea.descripcion %}
-                            <p class="mb-1 text-muted">{{ tarea.descripcion }}</p>
-                        {% endif %}
+        <div class="col-md-5">
+            <h4 class="text-success mb-3">Completadas</h4>
+            <div class="list-group shadow-sm mb-4">
+                {% for tarea in completadas %}
+                    <div class="list-group-item list-group-item-action bg-light opacity-75">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 text-decoration-line-through">{{ tarea.titulo }}</h6>
+                                <small class="text-muted">Completada</small>
+                            </div>
+                            <a href="{{ url_for('reabrir_tarea', tarea_id=tarea._id) }}" class="btn btn-sm btn-outline-secondary" title="Reabrir">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+                        </div>
                     </div>
-                    <a href="{{url_for('completar_tarea', tarea_id=tarea._id)}}" class="btn btn-sm btn-outline-success">Completar</a>
-                </div>
-            {% else %}
-                <div class="list-group-item text-center text-muted py-4">No hay tareas pendientes.</div>
-            {% endfor %}
-        </div>
-    </div>
+                {% else %}
+                    <div class="list-group-item text-center text-muted py-3 bg-light">Aún no hay tareas terminadas.</div>
+                {% endfor %}
+            </div>
 
-    <div class="col-md-6 p-5 mb-4">
-        <h4 class="text-light mb-3">Completadas</h4>
-        <div class="list-group shadow-sm opacity-75">
-            {% for tarea in completadas %}
-                <div class="list-group-item list-group-item-action bg-light">
-                    <h6 class="mb-1 text-decoration-line-through text-success">{{ tarea.titulo }}</h6>
-                {%if tarea.descripcion %}
-                    <p class="mb-1 text-muted text-decoration-line-through">{{ tarea.descripcion }}</p>
-                {% endif %}
-                </div>
-            {% else %}
-                <div class="list-group-item text-center text-muted py-4 bg-light">No hay tareas completadas.</div>
-            {% endfor %}
+            <h4 class="text-danger mb-3">Canceladas</h4>
+            <div class="list-group shadow-sm">
+                {% for tarea in canceladas %}
+                    <div class="list-group-item list-group-item-action border-start border-danger border-4">
+                        <h6 class="mb-1 text-muted">{{ tarea.titulo }}</h6>
+                        <p class="mb-0 x-small text-danger" style="font-size: 0.8rem;">
+                            <strong>Motivo:</strong> {{ tarea.motivo_cancelacion }}
+                        </p>
+                        <a href="{{ url_for('reabrir_tarea', tarea_id=tarea._id) }}" class="btn btn-sm btn-link p-0 mt-1">Reintentar tarea</a>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

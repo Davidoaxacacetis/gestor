@@ -122,13 +122,13 @@ def crear_tarea():
 @app.route('/empezar_tarea/<tarea_id>')
 def empezar_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_estado_tarea(tarea_id, "en_progreso")
+        gestor.actualizar_tarea(tarea_id, "en_progreso")
     return redirect(url_for('dashboard'))
 
 @app.route('/completar_tarea/<tarea_id>')
 def completar_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_estado_tarea(tarea_id, "completada")
+        gestor.actualizar_tarea(tarea_id, "completada")
         flash("¡Tarea completada!", "success")
     return redirect(url_for('dashboard'))
 
@@ -147,7 +147,7 @@ def cancelar_tarea(tarea_id):
 @app.route('/reabrir_tarea/<tarea_id>')
 def reabrir_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_estado_tarea(tarea_id, "pendiente")
+        gestor.actualizar_tarea(tarea_id, "pendiente")
         flash("Tarea reabierta", "info")
     return redirect(url_for('dashboard'))
 
