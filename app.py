@@ -122,51 +122,60 @@ def crear_tarea():
 @app.route('/empezar_tarea/<tarea_id>')
 def empezar_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_tarea(tarea_id, "en_progreso")
+        gestor.actualizar_tarea(tarea_id, {"estado": "en_progreso"})
     return redirect(url_for('dashboard'))
 
 @app.route('/completar_tarea/<tarea_id>')
 def completar_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_tarea(tarea_id, "completada")
-        flash("¡Tarea completada!", "success")
+        gestor.actualizar_tarea(tarea_id, {"estado": "completada"})
+        flash("¡Tarea completada! Buen trabajo.", "success")
     return redirect(url_for('dashboard'))
 
 @app.route('/cancelar_tarea/<tarea_id>', methods=['POST'])
 def cancelar_tarea(tarea_id):
     if 'usuario_id' in session:
         motivo = request.form.get('motivo')
-        gestor.actualizar_tarea(tarea_id, {
+        datos = {
             "estado": "cancelada",
-            "motivo_cancelacion": motivo,
-            "completada": False
-        })
-        flash("Tarea cancelada", "info")
+            "motivo_cancelacion": motivo
+        }
+        gestor.actualizar_tarea(tarea_id, datos)
+        flash("Tarea cancelada.", "info")
     return redirect(url_for('dashboard'))
 
 @app.route('/reabrir_tarea/<tarea_id>')
 def reabrir_tarea(tarea_id):
     if 'usuario_id' in session:
-        gestor.actualizar_tarea(tarea_id, "pendiente")
-        flash("Tarea reabierta", "info")
+        datos = {
+            "estado": "pendiente",
+            "motivo_cancelacion": None 
+        }
+        gestor.actualizar_tarea(tarea_id, datos)
+        flash("Tarea movida a pendientes.", "info")
     return redirect(url_for('dashboard'))
 
 @app.route('/editar_tarea/<tarea_id>', methods=['POST'])
 def editar_tarea(tarea_id):
     if 'usuario_id' in session:
-        datos = {
-            "titulo": request.form.get('titulo'),
-            "descripcion": request.form.get('descripcion')
+        titulo = request.form.get('titulo')
+        descripcion = request.form.get('descripcion')
+        
+        datos_actualizados = {
+            "titulo": titulo,
+            "descripcion": descripcion
         }
-        gestor.actualizar_tarea(tarea_id, datos)
-        flash("Cambios guardados", "success")
+        
+        gestor.actualizar_tarea(tarea_id, datos_actualizados)
+        flash("Tarea actualizada correctamente", "success")
+        
     return redirect(url_for('dashboard'))
 
 @app.route('/eliminar_tarea/<tarea_id>')
 def eliminar_tarea(tarea_id):
     if 'usuario_id' in session:
         gestor.eliminar_tarea(tarea_id)
-        flash("Tarea eliminada permanentemente", "danger")
+        flash("La tarea ha sido eliminada", "danger")
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
